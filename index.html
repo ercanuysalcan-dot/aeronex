@@ -17,4 +17,261 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1020;--card:#141b33;--tx:#eef1ff;--mut:#8f9ac0;--ac:#9a7dff;--gold:#f0b429;--bd:#27315a;--ok:#4cd68a}}
 :root[data-theme="dark"]{--bg:#0b1020;--card:#141b33;--tx:#eef1ff;--mut:#8f9ac0;--ac:#9a7dff;--gold:#f0b429;--bd:#27315a;--ok:#4cd68a}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-s
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:14px;max-width:560px;margin-inline:auto}
+h1{font-size:20px;margin:6px 0 12px}
+h2{font-size:14px;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;color:var(--mut);display:block;margin-bottom:4px}
+input{width:100%;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px}
+.big{font-size:22px;font-weight:700;color:var(--gold)}
+.k{font-size:12px;color:var(--mut)}
+.r{padding:8px 0;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;gap:8px}
+.r:last-child{border:0}
+.ok{color:var(--ok);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:6px 4px;text-align:right;border-bottom:1px solid var(--bd)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-weight:500;font-size:12px}
+.w{overflow-x:auto}
+button{padding:10px 12px;border-radius:10px;border:0;background:var(--ac);color:#fff;font-size:15px;font-weight:600;width:100%}
+button.s{background:var(--bg);color:var(--tx);border:1px solid var(--bd);font-weight:500}
+button.x{width:auto;padding:4px 10px;background:transparent;color:var(--mut);border:1px solid var(--bd);font-size:13px}
+.row{display:flex;gap:8px;margin-top:10px}
+</style>
+</head>
+<body>
+<h1>⚡ AERONEX Kazanç Hesaplayıcı</h1>
+
+<div class="card"><h2>Mevcut durum</h2>
+<div class="g">
+<div><label>COIN / saat</label><input id="rate" type="text" inputmode="decimal" value="607870"></div>
+<div><label>1 GRAM = kaç COIN (sabit)</label><input id="conv" type="text" inputmode="decimal" value="10000000" readonly style="opacity:.7"></div>
+<div><label>Mevcut COIN</label><input id="coin" type="text" inputmode="decimal" value="250610"></div>
+<div><label>Mevcut GRAM</label><input id="gram" type="number" inputmode="decimal" step="any" value="1.1587"></div>
+<div><label>Hedef GRAM</label><input id="goal" type="number" inputmode="decimal" step="any" value="1"></div>
+<div><label>GRAM fiyatı (₺, isteğe bağlı)</label><input id="price" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+</div></div>
+
+<div class="card"><div class="row" style="margin-top:0"><button id="dset">📌 Bu değerleri varsayılan yap</button><button class="s" id="dres">Varsayılana dön</button></div><div class="k" id="dmsg" style="margin-top:6px">Yukarıdaki kutuları doldurup butona bas, bu değerler varsayılan olarak saklanır.</div></div>
+
+<div class="card"><h2>Kazanç</h2>
+<div class="g">
+<div><div class="k">Saatlik</div><div class="big" id="oH">-</div></div>
+<div><div class="k">12 saatlik</div><div class="big" id="o12">-</div></div>
+<div><div class="k">Günlük (24 saat)</div><div class="big" id="oD">-</div></div>
+<div><div class="k">Haftalık (7 gün)</div><div class="big" id="oW">-</div></div>
+<div><div class="k">Aylık (30 gün)</div><div class="big" id="oM">-</div></div>
+</div>
+<div style="margin-top:10px">
+<div class="r"><span>12 saatlik GRAM</span><b id="g12">-</b></div>
+<div class="r"><span>12 saatlik ₺ değeri</span><b id="t12">-</b></div>
+<div class="r"><span>24 saatlik GRAM</span><b id="gD">-</b></div>
+<div class="r"><span>Haftalık GRAM</span><b id="gW">-</b></div>
+<div class="r"><span>Aylık (30 gün) GRAM</span><b id="gM">-</b></div>
+<div class="r"><span>Toplam değer (GRAM + COIN)</span><b id="tot">-</b></div>
+<div class="r"><span>Günlük ₺ değeri</span><b id="tl">-</b></div>
+<div class="r"><span>Haftalık ₺ değeri</span><b id="tlw">-</b></div>
+<div class="r"><span>Aylık ₺ değeri</span><b id="tlm">-</b></div>
+</div></div>
+
+<div class="card"><h2>Hedefe ne kadar kaldı?</h2>
+<div class="r"><span>Hedef GRAM</span><b id="tg">-</b></div>
+<div class="r"><span>Kalan süre</span><b class="ok" id="eta">-</b></div>
+<div class="r"><span>Sıfırdan hedefe</span><b id="eta0">-</b></div>
+<div class="r"><span>Dönüştürme (min 100.000 COIN)</span><b id="minc">-</b></div>
+</div>
+
+<div class="card"><h2>💰 Ana para / Kar-Zarar</h2>
+<div class="g">
+<div><label>Yatırılan ana para (₺)</label><input id="inv" type="number" inputmode="decimal" step="any" placeholder="örn. 1000"></div>
+<div><label>Şimdiye kadar çektiğim GRAM</label><input id="wd" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+</div>
+<div class="k" style="margin-top:6px">Ana para ile GRAM fiyatı aynı para biriminde olmalı (yukarıdaki "GRAM fiyatı" kutusunu doldur).</div>
+<div style="margin-top:10px">
+<div class="r"><span>Mevcut toplam değer</span><b id="iV">-</b></div>
+<div class="r"><span>Kar / Zarar</span><b id="iP">-</b></div>
+<div class="r"><span>Ana paranın geri dönüşü</span><b id="iPc">-</b></div>
+<div class="r"><span>Ana paraya kalan</span><b id="iL">-</b></div>
+<div class="r"><span>Ana para kaç günde çıkar</span><b class="ok" id="iD">-</b></div>
+<div class="r"><span>Tahmini tarih</span><b id="iDt">-</b></div>
+</div>
+<div class="k" style="margin-top:6px">Hesap, mevcut GRAM fiyatı ve kazancın sabit kalacağı varsayımıyla yapılır.</div>
+</div>
+
+<div class="card"><h2>🔎 Gerçek saatlik ölçüm</h2>
+<div class="k" style="margin-bottom:8px">Ana sayfadaki COIN sayısına iki farklı saatte bak. Aralarında dönüştürme, satın alma veya makine alma yapma.</div>
+<div class="g">
+<div><label>1. ölçüm COIN</label><input id="m1c" type="text" inputmode="decimal" placeholder="örn. 55500"></div>
+<div><label>1. ölçüm saati</label><input id="m1t" type="time"></div>
+<div><label>2. ölçüm COIN</label><input id="m2c" type="text" inputmode="decimal" placeholder="örn. 660000"></div>
+<div><label>2. ölçüm saati</label><input id="m2t" type="time"></div>
+</div>
+<div style="margin-top:10px">
+<div class="r"><span>Gerçek saatlik kazanç</span><b class="ok" id="mR">-</b></div>
+<div class="r"><span>Oyunda yazan hıza oranı</span><b id="mD">-</b></div>
+</div>
+<div class="row"><button class="s" id="muse">Bunu saatlik kazanç yap</button></div>
+</div>
+
+<div class="card"><h2>Yeni makine / yükseltme (ne kazandırır?)</h2>
+<div class="g">
+<div><label>Eklenecek COIN/saat</label><input id="add" type="number" inputmode="decimal" placeholder="örn. 50000"></div>
+<div><label>Maliyet (GRAM)</label><input id="cost" type="number" inputmode="decimal" step="any" placeholder="örn. 0.5"></div>
+</div>
+<div style="margin-top:8px">
+<div class="r"><span>Yeni günlük GRAM</span><b id="nD">-</b></div>
+<div class="r"><span>Maliyeti çıkarma süresi</span><b id="pb">-</b></div>
+</div></div>
+
+<div class="card"><h2>📒 Günlük kazanç kaydı</h2>
+<div class="g">
+<div><label>Tarih</label><input id="ld" type="date"></div>
+<div><label>O gün kazandığım COIN</label><input id="lc" type="text" inputmode="decimal" placeholder="örn. 14688888"></div>
+<div><label>Kayıt saati</label><input id="lt2" type="time"></div>
+</div>
+<div class="row"><button id="lsave">Kaydet</button><button class="s" id="lcancel" style="display:none">İptal</button><button class="s" id="lauto">Tahmini günlüğü yaz</button></div>
+<div class="k" style="margin-top:6px">Listedeki Düzenle ile bir kaydı düzeltebilirsin (tarih ve COIN değişir). Aynı tarihe tekrar kaydedersen o günün değeri güncellenir.</div>
+<div style="margin-top:10px">
+<div class="r"><span>Toplam kazanç</span><b id="lt">-</b></div>
+<div class="r"><span>Toplam GRAM karşılığı</span><b id="lg">-</b></div>
+<div class="r"><span>Günlük ortalama</span><b id="la">-</b></div>
+<div class="r"><span>Kayıtlı gün</span><b id="ln">-</b></div>
+</div>
+<div class="w" style="margin-top:8px"><table><thead><tr><th>Tarih / Saat</th><th>COIN</th><th>GRAM</th><th></th></tr></thead><tbody id="lb"></tbody></table></div>
+<div class="row"><button class="s" id="lclr">Tüm kayıtları sil</button></div>
+</div>
+
+<div class="card"><h2>Projeksiyon</h2>
+<div class="w"><table><thead><tr><th>Gün</th><th>COIN</th><th>GRAM</th><th>₺</th></tr></thead><tbody id="tb"></tbody></table></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ids=["rate","conv","coin","gram","goal","price","add","cost","inv","wd"];
+const nf=(n,d=0)=>isFinite(n)?n.toLocaleString("tr-TR",{maximumFractionDigits:d}):"-";
+function dur(h){
+  if(!isFinite(h)||h<0)return "-";
+  if(h===0)return "Ulaşıldı ✅";
+  const d=Math.floor(h/24),hh=Math.floor(h%24),m=Math.round((h*60)%60);
+  return (d?d+" gün ":"")+hh+" sa "+(m%60)+" dk";
+}
+function calc(){
+  const v={};const pn=(s,t)=>{s=String(s).trim();if(t&&/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,"");return parseFloat(s.replace(",","."))||0};
+  ids.forEach(i=>v[i]=pn($(i).value,["rate","conv","coin"].includes(i)));
+  try{localStorage.setItem("aeronex",JSON.stringify(v));localStorage.setItem("aeronex_cg2","1")}catch(e){}
+  const {rate,conv,coin,gram,goal,price,add,cost}=v;
+  const day=rate*24, gd=conv?day/conv:0;
+  $("oH").textContent=nf(rate);
+  $("oD").textContent=nf(day);
+  $("o12").textContent=nf(rate*12);
+  $("oW").textContent=nf(day*7);
+  $("oM").textContent=nf(day*30);
+  $("gD").textContent=nf(gd,4);
+  $("g12").textContent=nf(gd/2,4);
+  $("t12").textContent=price?nf(gd/2*price,2)+" ₺":"-";
+  $("gW").textContent=nf(gd*7,4);
+  $("gM").textContent=nf(gd*30,4);
+  const totG=gram+(conv?coin/conv:0);
+  $("tot").textContent=nf(totG,4)+" GRAM";
+  $("tl").textContent=price?nf(gd*price,2)+" ₺":"-";
+  $("tlw").textContent=price?nf(gd*7*price,2)+" ₺":"-";
+  $("tlm").textContent=price?nf(gd*30*price,2)+" ₺":"-";
+  const inv=v.inv,wd=v.wd,dayTl=gd*price;
+  const valG=gram+(conv?coin/conv:0)+wd,val=valG*price,pl=val-inv;
+  if(!inv||!price){["iV","iP","iPc","iL","iD","iDt"].forEach(x=>$(x).textContent="-");$("iP").style.color=""}
+  else{
+    $("iV").textContent=nf(val,2)+" ₺";
+    $("iP").textContent=(pl>=0?"+":"")+nf(pl,2)+" ₺ ("+(pl>=0?"+":"")+nf(pl/inv*100,1)+"%)";
+    $("iP").style.color=pl>=0?"var(--ok)":"#e5484d";
+    $("iPc").textContent="%"+nf(val/inv*100,1);
+    const rem=inv-val;
+    if(rem<=0){$("iL").textContent="0 ₺";$("iD").textContent="Ana para çıktı ✅";$("iDt").textContent="-"}
+    else{
+      $("iL").textContent=nf(rem,2)+" ₺";
+      if(dayTl>0){const days=rem/dayTl;$("iD").textContent=nf(days,1)+" gün";
+        const dt=new Date(Date.now()+days*864e5);$("iDt").textContent=dt.toLocaleDateString("tr-TR")}
+      else{$("iD").textContent="-";$("iDt").textContent="-"}
+    }
+  }
+  $("tg").textContent=nf(goal,4)+" GRAM";
+  const need=Math.max(0,goal-gram)*conv-coin;
+  $("eta").textContent=rate?dur(Math.max(0,need)/rate):"-";
+  $("eta0").textContent=rate?dur(goal*conv/rate):"-";
+  $("minc").textContent=rate?"Her "+dur(100000/rate)+" bir":"-";
+  const nr=rate+add, ngd=conv?nr*24/conv:0;
+  $("nD").textContent=add?nf(ngd,4)+" (+"+nf(ngd-gd,4)+")":"-";
+  const extra=conv?add*24/conv:0;
+  $("pb").textContent=(add&&cost&&extra)?nf(cost/extra,1)+" gün":"-";
+  let h="";
+  [1,3,7,14,30,60].forEach(d=>{
+    const c=coin+rate*24*d, g=gram+c/conv;
+    h+="<tr><td>"+d+"</td><td>"+nf(rate*24*d)+"</td><td>"+nf(g,3)+"</td><td>"+(price?nf(g*price,0):"-")+"</td></tr>";
+  });
+  $("tb").innerHTML=h;
+}
+try{const s=JSON.parse(localStorage.getItem("aeronex")||"null");const cg=localStorage.getItem("aeronex_cg2");if(s)ids.forEach(i=>{if(i==="conv"||((i==="coin"||i==="gram")&&!cg))return;if(s[i]!==undefined&&s[i]!==0)$(i).value=s[i]})}catch(e){}
+ids.forEach(i=>$(i).addEventListener("input",calc));
+calc();
+
+/* Günlük kayıt */
+const gp=s=>{s=String(s).trim();if(/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,"");return parseFloat(s.replace(",","."))};
+const tm=s=>{const a=s.split(":").map(Number);return a[0]*60+a[1]};
+let realRate=0;
+function mcalc(){
+  const c1=gp($("m1c").value),c2=gp($("m2c").value),t1=$("m1t").value,t2=$("m2t").value;
+  if(!isFinite(c1)||!isFinite(c2)||!t1||!t2){$("mR").textContent="-";$("mD").textContent="-";realRate=0;return}
+  let mins=tm(t2)-tm(t1);if(mins<=0)mins+=1440;
+  realRate=(c2-c1)/(mins/60);
+  $("mR").textContent=nf(realRate)+" COIN/sa ("+nf(mins/60,1)+" saat)";
+  const shown=gp($("rate").value);
+  $("mD").textContent=shown?"%"+nf(realRate/shown*100,1):"-";
+}
+["m1c","m1t","m2c","m2t","rate"].forEach(i=>$(i).addEventListener("input",mcalc));
+$("muse").onclick=()=>{if(realRate>0){$("rate").value=Math.round(realRate);calc();mcalc()}};
+
+$("dset").onclick=()=>{const v={};ids.forEach(i=>v[i]=$(i).value);try{localStorage.setItem("aeronex_def",JSON.stringify(v));$("dmsg").textContent="Varsayılan olarak kaydedildi ✅"}catch(e){$("dmsg").textContent="Kaydedilemedi"}};
+$("dres").onclick=()=>{try{const d=JSON.parse(localStorage.getItem("aeronex_def")||"null");if(!d){$("dmsg").textContent="Önce bir varsayılan kaydet";return}ids.forEach(i=>{if(d[i]!==undefined)$(i).value=d[i]});$("dmsg").textContent="Varsayılan değerler yüklendi ✅";calc();mcalc()}catch(e){$("dmsg").textContent="Yüklenemedi"}};
+
+const LK="aeronex_log";
+let log=[];
+try{log=JSON.parse(localStorage.getItem(LK)||"[]")||[]}catch(e){log=[]}
+const sv=()=>{try{localStorage.setItem(LK,JSON.stringify(log))}catch(e){}};
+const p2=n=>String(n).padStart(2,"0");
+const td=()=>{const d=new Date();return d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())};
+const fd=s=>s.split("-").reverse().join(".");
+const nowT=()=>{const d=new Date();return p2(d.getHours())+":"+p2(d.getMinutes())};
+$("lt2").value=nowT();
+$("ld").value=td();
+function rl(){
+  const conv=parseFloat($("conv").value)||0;
+  log.sort((a,b)=>b.d.localeCompare(a.d));
+  const tot=log.reduce((s,x)=>s+x.c,0);
+  $("lt").textContent=log.length?nf(tot)+" COIN":"-";
+  $("lg").textContent=log.length&&conv?nf(tot/conv,4)+" GRAM":"-";
+  $("la").textContent=log.length?nf(tot/log.length)+" COIN":"-";
+  $("ln").textContent=log.length||"-";
+  $("lb").innerHTML=log.map((x,i)=>"<tr><td>"+fd(x.d)+(x.t?"<br><span class=\"k\">"+x.t+"</span>":"")+"</td><td>"+nf(x.c)+"</td><td>"+(conv?nf(x.c/conv,4):"-")+"</td><td style=\"white-space:nowrap\"><button class=\"x\" onclick=\"ed("+i+")\">Düzenle</button> <button class=\"x\" onclick=\"dl("+i+")\">Sil</button></td></tr>").join("")||"<tr><td colspan=4 style='text-align:center;color:var(--mut)'>Henüz kayıt yok</td></tr>";
+}
+function dl(i){log.splice(i,1);sv();endEdit();rl()}
+let editD=null;
+function ed(i){const x=log[i];if(!x)return;editD=x.d;$("ld").value=x.d;$("lc").value=x.c;$("lt2").value=x.t||"";$("lsave").textContent="Güncelle";$("lcancel").style.display="";$("lc").focus()}
+function endEdit(){editD=null;$("lc").value="";$("ld").value=td();$("lt2").value=nowT();$("lsave").textContent="Kaydet";$("lcancel").style.display="none"}
+$("lcancel").onclick=endEdit;
+$("lsave").onclick=()=>{
+  const d=$("ld").value,c=gp($("lc").value),t=$("lt2").value;
+  if(!d||!isFinite(c)||c<0)return;
+  if(editD&&editD!==d)log=log.filter(x=>x.d!==editD);
+  const e=log.find(x=>x.d===d);
+  if(e){e.c=c;e.t=t}else log.push({d,c,t});
+  sv();endEdit();rl();
+};
+$("lauto").onclick=()=>{$("lc").value=Math.round((parseFloat($("rate").value)||0)*24)};
+$("lclr").onclick=()=>{if(log.length&&confirm("Tüm kayıtlar silinsin mi?")){log=[];sv();rl()}};
+$("conv").addEventListener("input",rl);
+rl();
+
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+</script>
+</body>
+</html>
